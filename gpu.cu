@@ -100,6 +100,14 @@ __global__ void init_states(int seed, curandState_t* states) {
     curand_init(seed, blockIdx.x, 0, &states[blockIdx.x]);
 }
 
+__global__ void randomize_visible_state(int* visible_state_gpu, int n_nodes, curandState* state) {
+    int idx = blockIdx.x * blockDim.x + threadIdx.x;
+    if (idx < n_nodes) {
+        float rand_num = curand_uniform(&state[idx]);
+        visible_state_gpu[idx] = (rand_num < 0.5) ? 0 : 1;
+    }
+}
+
 void init_rbm(int n_nodes, int n_weights, int n_steps, int* weights, int* visible_bias, int* hidden_bias, int seed) {
     // You can use this space to initialize data objects that you may need
     // This function will be called once before the algorithm begins
@@ -124,8 +132,19 @@ void init_rbm(int n_nodes, int n_weights, int n_steps, int* weights, int* visibl
 }
 
 void reset_rbm(int n_nodes) {
-    // Resetting according to Jupyter notebook to all 1s (should be randomized for max cut)
-    cudaMemset(visible_state_gpu, 0, n_nodes*sizeof(int));
+    // Resetting according to Jupyter notebook to all 1s
+    // cudaMemset(visible_state_gpu, 0, n_nodes*sizeof(int));
+    // Initialize random number generator states
+    // Launch kernel to randomize visible_state_gpu
+    randomize_visible_state<<<(n_nodes + 255) / 256, 256>>>(visible_state_gpu, n_nodes, states);
+    cudaDeviceSynchronize();
+    // print visible_state_gpu
+    int* visible_state = (int*) malloc(n_nodes * sizeof(int));
+    cudaMemcpy(visible_state, visible_state_gpu, n_nodes * sizeof(int), cudaMemcpyDeviceToHost);
+    for (int i = 0; i < n_nodes; i++) {
+        std::cout << visible_state[i];
+    }
+    std::cout << std::endl;
 }
 
 void free_rbm() {

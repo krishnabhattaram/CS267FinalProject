@@ -145,7 +145,7 @@ std::vector<std::vector<int>> load_parameters(const char* loadfile, int* n_nodes
     return adj_matrix;
 }
 
-int cut_value_jit(std::vector<std::vector<int>> adj, int num_visible, const int* state) {
+int cut_value(std::vector<std::vector<int>> adj, int num_visible, const int* state) {
     int cut = 0;
     for (int i = 0; i < num_visible; ++i) {
         for (int j = 0; j < i; ++j) {
@@ -259,7 +259,7 @@ int main(int argc, char** argv) {
             std::cout << visible_vals[i+j];
         }
         if (loadname != nullptr) {
-            std::cout << " Cut Value: " << cut_value_jit(adj_matrix, n_nodes, visible_vals + i);
+            std::cout << " Cut Value: " << cut_value(adj_matrix, n_nodes, visible_vals + i);
         }
         std::cout << std::endl;
     }
