@@ -5,4 +5,5 @@
 #SBATCH -t 00:30:00
 #SBATCH --gpus-per-node=4
 
-./gpu -s 2 -l 50000
+./gpu -s 2 -l 8192
+# ./gpu -s 2 -l 100 -i /global/homes/c/cyl/final_project/N150-id09.txt
