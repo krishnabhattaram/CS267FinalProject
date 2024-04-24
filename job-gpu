@@ -5,5 +5,47 @@
 #SBATCH -t 00:30:00
 #SBATCH --gpus-per-node=4
 
-# ./gpu -s 2 -l 8192
-./gpu -s 2 -l 8192 -i /global/homes/c/cyl/final_project/N150-id09.txt
+
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 1
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 2
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 3
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 4
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 6
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 10
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 15
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 30
+./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 50
+
+# ./gpu -s 2 -l 50000 -n 2048 -b 1
+# ./gpu -s 2 -l 50000 -n 2048 -b 2
+# ./gpu -s 2 -l 50000 -n 2048 -b 4
+# ./gpu -s 2 -l 50000 -n 2048 -b 8
+# ./gpu -s 2 -l 50000 -n 2048 -b 10
+# ./gpu -s 2 -l 50000 -n 2048 -b 16
+# ./gpu -s 2 -l 50000 -n 2048 -b 20
+# ./gpu -s 2 -l 50000 -n 2048 -b 30
+# ./gpu -s 2 -l 50000 -n 2048 -b 32
+# ./gpu -s 2 -l 50000 -n 2048 -b 40
+# ./gpu -s 2 -l 50000 -n 2048 -b 50
+# ./gpu -s 2 -l 50000 -n 2048 -b 60
+# ./gpu -s 2 -l 50000 -n 2048 -b 64
+# ./gpu -s 2 -l 50000 -n 2048 -b 128
+# ./gpu -s 2 -l 50000 -n 2048 -b 256
+# ./gpu -s 2 -l 50000 -n 2048 -b 512
+# ./gpu -s 2 -l 50000 -n 2048 -b 1024
+# ./gpu -s 2 -l 50000 -n 2048 -b 2048
+
+
+# ./gpu -s 2 -l 50000 -n 100 -b 1
+# ./gpu -s 2 -l 50000 -n 200 -b 2
+# ./gpu -s 2 -l 50000 -n 400 -b 4
+# ./gpu -s 2 -l 50000 -n 800 -b 8
+# ./gpu -s 2 -l 50000 -n 1000 -b 10
+# ./gpu -s 2 -l 50000 -n 1600 -b 16
+# ./gpu -s 2 -l 50000 -n 2000 -b 20
+# ./gpu -s 2 -l 50000 -n 3000 -b 30
+# ./gpu -s 2 -l 50000 -n 3200 -b 32
+# ./gpu -s 2 -l 50000 -n 4000 -b 40
+# ./gpu -s 2 -l 50000 -n 5000 -b 50
+# ./gpu -s 2 -l 50000 -n 6000 -b 60
+# ./gpu -s 2 -l 50000 -n 6400 -b 64
