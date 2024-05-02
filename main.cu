@@ -39,7 +39,7 @@ void load_parameters_toy(char* loadfile, int* n_nodes, int* n_weights,
     *visible_bias = (float*) malloc(*n_nodes * sizeof(float));
     *hidden_bias = (float*) malloc(*n_nodes * sizeof(float));
 
-    // [-9, -12, 4], [-9, 4, -12], [-1, -10, -10]
+    // ([-9, -12, 4], [-9, 4, -12], [-1, -10, -10]).T
     // Assumed to be ROW MAJOR
     (*weights)[0] = -9;
     (*weights)[1] = -9;
@@ -462,7 +462,8 @@ void load_parameters(int* n_nodes,
     *weights_T = new float[*n_nodes * *n_nodes](); 
     for (size_t i = 0; i < weights_vec.size(); ++i) {
         for (size_t j = 0; j < weights_vec[i].size(); ++j) {
-            (*weights_T)[i * *n_nodes + j] = weights_T_vec[i][j];
+            (*weights)[i * (*n_nodes) + j] = weights_T_vec[i][j]; // TODO !
+            (*weights_T)[i * (*n_nodes) + j] = weights_T_vec[i][j];
         }
     }
     *visible_bias = new float[*n_nodes]();
@@ -591,9 +592,9 @@ int main(int argc, char** argv) {
     std::vector<std::vector<int>> adj_matrix;
     bool clamp = false;
     if (loadname == nullptr) {
-        // load_parameters_toy(loadname, &n_nodes, &n_weights, &weights, &visible_bias, &hidden_bias);
-        // clamp = true;
-        init_weights_bias(n_nodes, &weights, &visible_bias, &hidden_bias);
+        load_parameters_toy(loadname, &n_nodes, &n_weights, &weights, &visible_bias, &hidden_bias);
+        clamp = true;
+        //init_weights_bias(n_nodes, &weights, &visible_bias, &hidden_bias);
     } else {
         // adj_matrix = load_parameters_from_file(loadname, &n_nodes, &n_weights, &weights, &visible_bias, &hidden_bias);
         load_parameters(&n_nodes, &weights, &weights_T, &visible_bias, &hidden_bias);
@@ -620,16 +621,16 @@ int main(int argc, char** argv) {
     
 
     // Debugging
-    // for (int i = 0; i < n_steps*n_nodes; i+=n_nodes){
-    //     std::cout << "Step "<< i/n_nodes << " ";
-    //     for (int j = 0; j < n_nodes; j++){
-    //         std::cout << visible_vals[i+j];
-    //     }
-    //     // if (loadname != nullptr) {
-    //     //     std::cout << " Cut Value: " << cut_value(adj_matrix, n_nodes, visible_vals + i);
-    //     // }
-    //     std::cout << std::endl;
-    // }
+    for (int i = 0; i < n_steps*n_nodes; i+=n_nodes){
+        std::cout << "Step "<< i/n_nodes << " ";
+        for (int j = 0; j < n_nodes; j++){
+            std::cout << visible_vals[i+j];
+        }
+        // if (loadname != nullptr) {
+        //     std::cout << " Cut Value: " << cut_value(adj_matrix, n_nodes, visible_vals + i);
+        // }
+        std::cout << std::endl;
+    }
 
     cudaDeviceSynchronize();
     auto end_time = std::chrono::steady_clock::now();

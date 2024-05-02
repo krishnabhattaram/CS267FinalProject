@@ -18,7 +18,7 @@ curandState_t* states;
 
 __global__ void visible_to_hidden_gpu(int* visible_state, int* hidden_state, float* weights, float* visible_bias,
                                       float* hidden_bias, int step, int n_nodes, int n_blocks, curandState_t* states) {
-    __shared__ int dot_arr[NUM_THREADS];
+    __shared__ float dot_arr[NUM_THREADS];
 
     int num_nodes_per_block = (n_nodes + n_blocks - 1) / n_blocks;
     for (int i = 0; i < num_nodes_per_block; i++) {
@@ -37,7 +37,7 @@ __global__ void visible_to_hidden_gpu(int* visible_state, int* hidden_state, flo
             }
         }
 
-        // __syncthreads();
+        __syncthreads();
 
         // Reduction to compute final dot product
         for (unsigned int s = 1; s < NUM_THREADS; s *= 2) {
@@ -45,15 +45,15 @@ __global__ void visible_to_hidden_gpu(int* visible_state, int* hidden_state, flo
             if (index < NUM_THREADS) {
                 dot_arr[index] += dot_arr[index + s];
             }
-            // __syncthreads();
+            __syncthreads();
         }
 
         if (threadIdx.x == 0) {
-            int dot_product = dot_arr[0] + hidden_bias[node_idx];
-            // printf("BlockIdx %d Visible %d%d%d\n", blockIdx.x, visible_state[0], visible_state[1], visible_state[2]);
-            // printf("BlockIdx %d V2H Dot Product %d\n\n", blockIdx.x, dot_product);
+            float dot_product = dot_arr[0] + hidden_bias[node_idx];
+            // printf("NodeIDX %d Visible %d%d%d\n", node_idx, visible_state[0], visible_state[1], visible_state[2]);
+            // printf("NodeIDX %d V2H Dot Product %.3f\n\n", node_idx, dot_arr[0]);
 
-            double sigmoid = 1. / (1 + exp(-1.0 * dot_product));
+            float sigmoid = 1. / (1 + exp(-1.0 * dot_product));
 
             float randunif = curand_uniform(&states[node_idx]);
             hidden_state[node_idx] = (sigmoid > randunif) ? 1 : 0;
@@ -65,7 +65,7 @@ __global__ void visible_to_hidden_gpu(int* visible_state, int* hidden_state, flo
 
 __global__ void hidden_to_visible_gpu(int* visible_state, int* hidden_state, float* weights, float* visible_bias,
                                       float* hidden_bias, int step, int n_nodes, int n_blocks, curandState_t* states, bool clamp) {
-    __shared__ int dot_arr[NUM_THREADS];
+    __shared__ float dot_arr[NUM_THREADS];
 
     int num_nodes_per_block = (n_nodes + n_blocks - 1) / n_blocks;
     for (int i = 0; i < num_nodes_per_block; i++) {
@@ -74,12 +74,25 @@ __global__ void hidden_to_visible_gpu(int* visible_state, int* hidden_state, flo
             return;
         }
 
+        // Initialize shared memory
+        dot_arr[threadIdx.x] = 0;
+
         for (int j = 0; j < (n_nodes + NUM_THREADS - 1) / NUM_THREADS; j++) {
             int idx = j * NUM_THREADS + threadIdx.x;
             if (idx < n_nodes) {
-                dot_arr[threadIdx.x] += weights[node_idx + n_nodes * idx] * visible_state[idx];
+                dot_arr[threadIdx.x] += weights[node_idx + n_nodes * idx] * hidden_state[idx];
             }
         }
+
+        __syncthreads();
+
+        // if (threadIdx.x == 0) {
+        //     printf("Dot Arr: ");
+        //     for (int k = 0; k < NUM_THREADS; k++) {
+        //         printf(" %d ", dot_arr[k]);
+        //     }
+        //     printf("\n");
+        // }
 
         // __syncthreads();
 
@@ -89,15 +102,15 @@ __global__ void hidden_to_visible_gpu(int* visible_state, int* hidden_state, flo
             if (index < NUM_THREADS) {
                 dot_arr[index] += dot_arr[index + s];
             }
-            // __syncthreads();
+            __syncthreads();
         }
 
         if (threadIdx.x == 0) {
-            int dot_product = dot_arr[0] + visible_bias[node_idx];
-            // printf("BlockIdx %d Hidden %d%d%d\n", blockIdx.x, hidden_state[0], hidden_state[1], hidden_state[2]);
-            // printf("BlockIdx %d H2V Final Dot Product %d\n\n", blockIdx.x, dot_product);
+            float dot_product = dot_arr[0] + visible_bias[node_idx];
+            // printf("NodeIDX %d Hidden %d%d%d\n", node_idx, hidden_state[0], hidden_state[1], hidden_state[2]);
+            // printf("NodeIDX %d H2V Final Dot Product %.3f\n\n", node_idx, dot_arr[0]);
 
-            double sigmoid = 1. / (1 + exp(-1.0 * dot_product));
+            float sigmoid = 1. / (1 + exp(-1.0 * dot_product));
 
             float randunif = curand_uniform(&states[node_idx]);
             visible_state[node_idx] = (sigmoid > randunif) ? 1 : 0;

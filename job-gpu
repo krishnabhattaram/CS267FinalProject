@@ -6,15 +6,15 @@
 #SBATCH --gpus-per-node=4
 
 
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 1
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 2
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 3
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 4
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 6
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 10
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 15
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 30
-./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 50
+# ./gpu -s 1 -l 50000 -b 15
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 2
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 3
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 4
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 6
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 10
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 15
+# ./gpu -s 2 -l 50000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 30
+./gpu -s 2 -l 1000 -i /global/homes/c/cyl/final_project/N150-id09.txt -b 150
 
 # ./gpu -s 2 -l 50000 -n 2048 -b 1
 # ./gpu -s 2 -l 50000 -n 2048 -b 2
